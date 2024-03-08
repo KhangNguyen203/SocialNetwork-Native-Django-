@@ -1,0 +1,118 @@
+- pip install django
+- pip install djangorestframework
+- pip install mysqlclient hoặc python -m pip install pymysql
+- pip install pillow
+- pip install django-ckeditor
+- pip install django-oauth-toolkit
+   + Thực thi migrate
+     >> python manage.py migrate oauth2_provider
+- pip install drf-yasg
+
+ 
+- django-admin startproject nameProject
+- django-admin  startapp nameApp
+
+- python .\manage.py runserver  (trong file nameProject) --> chạy server 
+
+- python manage.py makemigrations courses  #Tạo tập tin 0001_initial.py
+- python manage.py sqlmigrate courses 0001  #Xem Script lệnh sql của file 0001_initial.py
+- python manage.py migrate  #Lệnh tác động xuống csdl
+
+
+- Tạo máy ảo: virtualenv venv
+- Khởi động máy ảo: venv\Scripts\activate
+
+- pip freeze > requirements.txt
+- pip install -r requirements.txt
+
+
+tltk: docs.djangoproject.com/en/4.2/intro/tutorial01
+
+
+
+
+
+
+-------------------------------------------------------------------------------------------------
+-------------04 Một số tương tác dữ liệu trên python shell trong django-------
+
+- python manage.py shell  #Mở màn hình tương tác dữ liệu trên Django
+
+   + Import database
+     >>>from courses.models import *
+
+   +  Thêm dữ liệu cho bảng
+     >>> c = Category(name = "Java Programing")
+     >>> c.save()
+
+   + Thêm dữ liệu cho bảng
+     >>>Category.objects.create(name="Basis Programing")
+
+   + Thêm dữ liệu cho bảng (có kiểm tra, nếu chưa thì tạo)
+     >>>Category.objects.get_or_create(name="Design Website")  
+
+   + Thêm dữ liệu có KHÓA NGOẠI
+     >>> c = Category.objects.get(pk=1)  #primary key(khóa chính) - lấy theo khóa chính
+     >>> c.__dict__  #Xem các thuộc tính của khóa chính c
+     >>> Course.objects.create(subject="core java", description="nhap mon", category=c)
+
+  + Join bảng 
+     >>> q = Course.objects.filter(category__name__contains="Java")  #join 2 bảng và select * from Course where CategoryID.name =="Java"
+     >>> print(q.query)  #Xem câu lệnh query
+
+
+--------------05 Sử dụng một số meta options trong django 
+- unique_together = ('subject', 'category')
+   + 'subject', 'category' - 2 giá trị này gộp lại phải là unique
+   + Trong 1 category không được trùng trên course
+
+- db_table = 'Course' - Đổi tên bảng 'course', thay vì tên mặc định do Django tạo
+
+- ordering = ["id"] - sắp xếp theo id (+ tăng - giảm)
+
+
+--------------Truy vấn dữ liệu 
+------------------(Ký tự đầu viết hoa - class , viết thường - tên db)
+* Note: Lọc dữ liệu dùng .filter() 
+   vd: >>>Lesson.objects.filter(pk = 1),
+         >>>Lesson.objects.filter(subject__contain="java"),....	
+
+* ManyToOne
+TRUY VẤN LẤY HẾT DL
+>>> c = Course.objects.get(pk= id)
+>>> c.lessons.all()  #Lấy tất cả lesson của course theo id course
+
+TRUY VẤN LỌC DỮ LIỆU
+>>> Lesson.objects.filter(course__subject__icontains='core')  #Lấy những >>> lesson của course có name chứ chuỗi ''core"
+
+>>> Course.objects.filter(lessons__active=True)  #Lấy những course có active của lesson là true GIỐNG JOIN BẢNG #lessons là được khai báo -- related_name="lessons"
+
+* ManyToMany
+- Lưu dữ liệu xuống 2 bảng ManyToMany
+   >>> t = Tag.objects.create(name = "java") 
+   >>> l = Lesson.objects.get(pk=1)
+   >>> l.tags.add(t)
+   >>> l.save() 
+- Xem danh sách Lessoon của Tag và ngược lại
+   >>> l.tags.all()
+   >>> t.lessons.all()  #lessons là được khai báo -- related_name="lessons"
+
+
+-------------10 Tích hợp CKEditor vào trang admin của django
+
+
+
+-----------------ADMIN--------------------
+--> Tạo super user cho system: python manage.py createsuperuser
+
+
+----------------Tạo API--------------------
+- Xem dữ liệu đỗ ra như thế nào ở Shell: 
+   + Xem tất cả Subjects của Courses
+     >>> Mở shell 
+     >>> from courses.serializers import * 
+     >>>from courses.models import * 
+     >>>courses = Course.objects.all()
+     >>>CourseSerializer(courses, many=True).data  //đối với json nhiều đối tượng thì mới dùng many=True
+
+

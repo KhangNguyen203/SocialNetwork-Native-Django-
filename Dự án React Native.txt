@@ -1,0 +1,19 @@
+-  Cài công cụ tạo project
+   + npm install -g create-react-native-app
+
+- Tạo project
+   + create-react-native-app ReactNativeDemoApp
+
+- Chạy dự án
+   + npm start, s (Cùng mạng wifi)
+   + npx expo start --tunnel (Khác mạng)
+
+- Kiểm tra cấu hình 
+   + npm config list
+
+
+
+* CÀI ĐẶT CÁC GÓI
+- npm install (All các gói)
+- npm install expo-image-picker
+- npm install @react-native-async-storage/async-storage
